@@ -82,7 +82,6 @@ contract LongChef is Ownable {
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
-    event Print1(address indexed user, uint256 amount);
 
     constructor(
         LongToken _long,
@@ -194,12 +193,12 @@ contract LongChef is Ownable {
         if (block.number > pool.lastRewardBlock && lpSupply != 0) {
             uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
             uint256 longReward = multiplier.mul(longPerBlock);
-            accLongPerShare = accLongPerShare.add(longReward.mul(1e12).div(lpSupply)); // 1e12=1*10^12
+            accLongPerShare = accLongPerShare.add(longReward.mul(1e12).div(lpSupply));
         }
         return user.amount.mul(accLongPerShare).div(1e12).sub(user.rewardDebt);
     }
 
-    // Update reward vairables for all pools. Be careful of gas spending!
+    // Update reward variables for all pools. Be careful of gas spending!
     function massUpdatePools() public {
         uint256 length = poolInfo.length;
         for (uint256 pid = 0; pid < length; ++pid) {
@@ -233,10 +232,14 @@ contract LongChef is Ownable {
         updatePool(_pid);
         if (user.amount > 0) {
             uint256 pending = user.amount.mul(pool.accLongPerShare).div(1e12).sub(user.rewardDebt);
-            safeLongTransfer(msg.sender, pending);
+            if(pending > 0) {
+                safeLongTransfer(msg.sender, pending);
+            }
         }
-        pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
-        user.amount = user.amount.add(_amount);
+        if(_amount > 0) {
+            pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
+            user.amount = user.amount.add(_amount);
+        }
         user.rewardDebt = user.amount.mul(pool.accLongPerShare).div(1e12);
         emit Deposit(msg.sender, _pid, _amount);
     }
@@ -248,10 +251,14 @@ contract LongChef is Ownable {
         require(user.amount >= _amount, "withdraw: not good");
         updatePool(_pid);
         uint256 pending = user.amount.mul(pool.accLongPerShare).div(1e12).sub(user.rewardDebt);
-        safeLongTransfer(msg.sender, pending);
-        user.amount = user.amount.sub(_amount);
+        if(pending > 0) {
+            safeLongTransfer(msg.sender, pending);
+        }
+        if(_amount > 0) {
+            user.amount = user.amount.sub(_amount);
+            pool.lpToken.safeTransfer(address(msg.sender), _amount);
+        }
         user.rewardDebt = user.amount.mul(pool.accLongPerShare).div(1e12);
-        pool.lpToken.safeTransfer(address(msg.sender), _amount);
         emit Withdraw(msg.sender, _pid, _amount);
     }
 
