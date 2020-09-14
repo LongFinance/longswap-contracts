@@ -1,0 +1,17 @@
+{
+  "name": "LongSwap",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@openzeppelin/contracts": "^3.1.0",
+    "@openzeppelin/test-helpers": "^0.5.6",
+    "@truffle/hdwallet-provider": "^1.0.43",
+    "remixd": "^0.2.3-alpha.4",
+    "truffle": "^5.1.41",
+    "truffle-export-abi": "^1.0.1",
+    "truffle-flattener": "^1.4.4",
+    "truffle-hdwallet-provider": "^1.0.17",
+    "tslib": "^2.0.1"
+  }
+}
