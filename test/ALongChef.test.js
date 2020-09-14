@@ -116,6 +116,80 @@ contract('LongChef', ([alice, bob, carol, dev, minter]) => {
             assert.equal((await this.long.balanceOf(bob)).valueOf(), '96600');
         });
 
+        it('should give out LONGs block from mid 900 to mid 700.', async () => {
+            this.chef = await LongChef.new(this.long.address, dev, '100', '183', '309', { from: alice });
+            await this.long.transferOwnership(this.chef.address, { from: alice });
+            await this.chef.add('1', this.lp.address, true);
+            await this.lp.approve(this.chef.address, '1000', { from: bob });
+            console.log("balanceOf 0", (await this.long.balanceOf(bob)).valueOf());
+            console.log("0", await time.latestBlock());
+
+            // 1000 tokens minted per block
+            await time.advanceBlockTo(204);
+            // 900 tokens minted per block
+            await time.advanceBlockTo(219);
+            console.log("balanceOf 1", (await this.long.balanceOf(bob)).valueOf());
+            await this.chef.deposit(0, '100', { from: bob }); // block number 220
+            await this.chef.deposit(0, '0', { from: bob }); // block number 221
+            console.log("balanceOf 2", (await this.long.balanceOf(bob)).valueOf());
+            await time.advanceBlockTo(224);
+            await this.chef.deposit(0, '0', { from: bob }); // block number 225
+            console.log("balanceOf 3", (await this.long.balanceOf(bob)).valueOf());
+            assert.equal((await this.long.balanceOf(bob)).valueOf(), '4500');
+
+            // 800 tokens minted per block
+            await time.advanceBlockTo(245);
+            await this.chef.deposit(0, '0', { from: bob }); // block number 246
+            console.log("balanceOf 4", (await this.long.balanceOf(bob)).valueOf());
+            assert.equal((await this.long.balanceOf(bob)).valueOf(), '21300');
+
+            // 700 tokens minted per block
+            await time.advanceBlockTo(255);
+            await this.chef.deposit(0, '0', { from: bob }); // block number 256
+            console.log("balanceOf 5", (await this.long.balanceOf(bob)).valueOf());
+            assert.equal((await this.long.balanceOf(bob)).valueOf(), '28300');
+        });
+
+        it('should give out LONGs block from 600 to bonusEnd after.', async () => {
+            this.chef = await LongChef.new(this.long.address, dev, '100', '256', '382', { from: alice });
+            await this.long.transferOwnership(this.chef.address, { from: alice });
+            await this.chef.add('1', this.lp.address, true);
+            await this.lp.approve(this.chef.address, '1000', { from: bob });
+            console.log("balanceOf 0", (await this.long.balanceOf(bob)).valueOf());
+            console.log("0", await time.latestBlock());
+
+            // 1000 tokens minted per block
+            await time.advanceBlockTo(277);
+            // 900 tokens minted per block
+            await time.advanceBlockTo(298);
+            // 800 tokens minted per block
+            await time.advanceBlockTo(319);
+            // 700 tokens minted per block
+            await time.advanceBlockTo(340);
+            // 600 tokens minted per block
+            await time.advanceBlockTo(350);
+            console.log("1", await time.latestBlock());
+            console.log("balanceOf 1", (await this.long.balanceOf(bob)).valueOf());
+            await this.chef.deposit(0, '100', { from: bob }); // block number 351
+            await this.chef.deposit(0, '0', { from: bob }); // block number 352
+            await time.advanceBlockTo(360);
+            await this.chef.deposit(0, '0', { from: bob }); // block number 361
+            console.log("balanceOf 5", (await this.long.balanceOf(bob)).valueOf());
+            assert.equal((await this.long.balanceOf(bob)).valueOf(), '6000');
+
+            // 500 tokens minted per block
+            await time.advanceBlockTo(381);
+            await this.chef.deposit(0, '0', { from: bob }); // block number 382
+            console.log("balanceOf 6", (await this.long.balanceOf(bob)).valueOf());
+            assert.equal((await this.long.balanceOf(bob)).valueOf(), '16500');
+
+            // 100 tokens minted per block
+            await time.advanceBlockTo(402);
+            await this.chef.deposit(0, '0', { from: bob }); // block number 403
+            console.log("balanceOf 6", (await this.long.balanceOf(bob)).valueOf());
+            assert.equal((await this.long.balanceOf(bob)).valueOf(), '18600');
+        });
+
         it('should give out LONGs only from >= bonusEndBlock', async () => {
             this.chef = await LongChef.new(this.long.address, dev, '100', '1', '1', { from: alice });
             await this.long.transferOwnership(this.chef.address, { from: alice });
