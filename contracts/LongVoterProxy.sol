@@ -23,8 +23,8 @@ interface LongChef {
 
 contract LongVoterProxy {
 
-    IERC20 public constant votes = IERC20(0x98DC03f44A2Ec630be8b9A853B616C3cAB6A08D1); //UniswapV2Pair LONG-ETH
-    LongChef public constant chef = LongChef(0x30D0BB4d4E391AB289d4EA4d8FCd2F53663c5439);
+    ERC20 public constant votes = IERC20(0xD2Ce10134268754B0C860972c0fC6f82249ed7e3); //LONG-ETH
+    LongChef public constant chef = LongChef(0x0F2ffEEb5296c33834C015cbbe65Df1DE8Fb454d);
     uint public constant pool = uint(12);
 
     function decimals() external pure returns (uint8) {
