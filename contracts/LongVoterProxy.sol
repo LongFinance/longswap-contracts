@@ -25,7 +25,7 @@ contract LongVoterProxy {
 
     IERC20 public constant votes = IERC20(0x8F224BA738572ded533B4386b077033E21683D7d); //LONG-ETH
     LongChef public constant chef = LongChef(0x324c8B4C19c467b976014e323b2CF954556BB876);
-    uint public constant pool = uint(12);
+    uint public constant pool = uint(9);
 
     function decimals() external pure returns (uint8) {
         return uint8(18);
